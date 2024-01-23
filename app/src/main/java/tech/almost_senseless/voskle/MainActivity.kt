@@ -69,11 +69,6 @@ private val Context.dataStore by preferencesDataStore(
 )
 
 class MainActivity : ComponentActivity() {
-    private val voskHub: VoskHub by lazy {
-        VoskHub(applicationContext)
-    }
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -83,22 +78,24 @@ class MainActivity : ComponentActivity() {
                     factory = VLTViewModelFactory(
                         UserPreferencesRepository(
                         applicationContext.dataStore
-                    )
+                    ), applicationContext
                     )
                 )
                 val state = viewModel.state
                 val settings = viewModel.settings.collectAsState(initial = UserPreferences())
-                voskHub.initializeServices(viewModel) // internally only executes ONCE then never again!
-                voskHub.setModelPath(settings.value.language.modelPath)
+
+
+                viewModel.getVoskHub().setModelPath(settings.value.language.modelPath)
+
                 val requestPermissionLauncher = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.RequestPermission(),
                     onResult = { isGranted ->
                         if (isGranted) {
-                            if (voskHub.isModelAvailable()) {
+                            if (viewModel.getVoskHub().isModelAvailable()) {
                                 viewModel.onAction(VLTAction.SetRecordingStatus(true))
-                                voskHub.toggleRecording()
+                                viewModel.getVoskHub().toggleRecording()
                             } else {
-                                voskHub.initModel()
+                                viewModel.getVoskHub().initModel()
                             }
                         }
                     }
@@ -120,8 +117,7 @@ class MainActivity : ComponentActivity() {
                                 LanguagePicker(
                                     settings = settings.value,
                                     state = state,
-                                    voskHub = voskHub,
-                                    onAction = viewModel::onAction,
+                                    viewModel = viewModel,
                                     modifier = Modifier
                                         .padding(8.dp)
                                 )
@@ -144,8 +140,7 @@ class MainActivity : ComponentActivity() {
                                 LanguagePicker(
                                     settings = settings.value,
                                     state = state,
-                                    voskHub = voskHub,
-                                    onAction = viewModel::onAction,
+                                    viewModel = viewModel,
                                     modifier = Modifier
                                         .padding(8.dp)
                                 )
@@ -183,7 +178,7 @@ class MainActivity : ComponentActivity() {
                                             if (checkSelfPermission(android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED && !state.isRecording) {
                                                 viewModel.onAction(VLTAction.ShowPermissionsDialog(true))
                                             } else {
-                                                voskHub.toggleRecording()
+                                                viewModel.getVoskHub().toggleRecording()
                                                 viewModel.onAction(VLTAction.SetRecordingStatus(
                                                     !viewModel.state.isRecording
                                                 ))
@@ -242,7 +237,7 @@ class MainActivity : ComponentActivity() {
                                             if (checkSelfPermission(android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED && !state.isRecording) {
                                                 viewModel.onAction(VLTAction.ShowPermissionsDialog(true))
                                             } else {
-                                                voskHub.toggleRecording()
+                                                viewModel.getVoskHub().toggleRecording()
                                                 viewModel.onAction(VLTAction.SetRecordingStatus(
                                                     !viewModel.state.isRecording
                                                 ))
@@ -415,7 +410,7 @@ class MainActivity : ComponentActivity() {
                             viewModel.onAction(VLTAction.UpdateFetchState(FetchState.UNPACKING))
                             UnzipUtils.unzip(sourceFile, "$externalFilesDir/models")
                             viewModel.onAction(VLTAction.ShowDownloadSuccess(true))
-                            voskHub.initModel()
+                            viewModel.getVoskHub().initModel()
                             sourceFile.delete()
                         } catch (e: IOException) {
                             viewModel.onAction(VLTAction.SetError(ErrorKind.DataProcessionFailed(

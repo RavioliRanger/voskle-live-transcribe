@@ -1,5 +1,6 @@
 package tech.almost_senseless.voskle
 
+ import android.content.Context
  import androidx.compose.runtime.getValue
  import androidx.compose.runtime.mutableStateOf
  import androidx.compose.runtime.setValue
@@ -11,9 +12,10 @@ package tech.almost_senseless.voskle
  import tech.almost_senseless.voskle.data.UserPreferencesRepository
  import tech.almost_senseless.voskle.vosklib.VoskHub
 
-class VLTViewModel(private val userPreferences: UserPreferencesRepository) : ViewModel() {
+class VLTViewModel(private val userPreferences: UserPreferencesRepository, private val context: Context) : ViewModel() {
 
     val settings = userPreferences.userPreferencesFlow
+
     var state by mutableStateOf(VLTState())
         private set
 
@@ -144,8 +146,21 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository) : Vie
     private fun updateFetchstate(fetchState: FetchState) {
         state = state.copy(fetchState = fetchState)
     }
+
+
+    private fun initVoskHub(){
+        val voskHub = VoskHub(context)
+        voskHub.subscribeToViewModel(this)
+        voskHub.initModel()
+    }
+
+    fun getVoskHub(): VoskHub {
+        if(this.state.voskHubInstance == null)
+            this.initVoskHub()
+        return this.state.voskHubInstance!!
+    }
 }
 
-class VLTViewModelFactory(private val userPreferences: UserPreferencesRepository) : ViewModelProvider.NewInstanceFactory() {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T = VLTViewModel(userPreferences) as T
+class VLTViewModelFactory(private val userPreferences: UserPreferencesRepository, private val context: Context) : ViewModelProvider.NewInstanceFactory() {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = VLTViewModel(userPreferences, context) as T
 }

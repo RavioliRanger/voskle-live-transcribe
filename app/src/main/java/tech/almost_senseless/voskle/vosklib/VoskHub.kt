@@ -21,7 +21,7 @@ import java.util.function.Consumer
 private const val TAG = "VoskHub"
 
 class VoskHub (
-    private val context: Context,
+    private val context: Context
 ) : RecognitionListener {
     private var viewModel: VLTViewModel? = null
     private var onAction:((VLTAction) -> Unit)? = null
@@ -32,13 +32,6 @@ class VoskHub (
     private var model: Model? = null
 
 
-
-    private var servicesUninitialized: Boolean = true
-    fun initializeServices(viewModel: VLTViewModel)
-    {
-        subscribeToViewModel(viewModel) && servicesUninitialized && initModel()
-        this.servicesUninitialized = false
-    }
 
     fun setModelPath(modelPath: String) {
         this.modelPath = modelPath
@@ -65,7 +58,7 @@ class VoskHub (
         return this.model != null
     }
 
-    private fun subscribeToViewModel(viewModel: VLTViewModel): Boolean{
+    fun subscribeToViewModel(viewModel: VLTViewModel): Boolean{
         if (this.viewModel == null || this.viewModel!! !== viewModel) {
             this.viewModel = viewModel
             this.onAction = viewModel::onAction
@@ -175,4 +168,5 @@ class VoskHub (
         val dir = File("$externalFilesDir/models/$pathToModel")
         return dir.exists() && dir.isDirectory
     }
+
 }
