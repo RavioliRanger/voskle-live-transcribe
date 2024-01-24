@@ -110,14 +110,16 @@ class VoskHub (
         if (!this.initModel())
             return
 
-        if (speechService != null) {
+        if (speechService != null || this.viewModel?.state?.isRecording == true) {
             speechService?.stop()
             speechService = null
+            updateApplicationState(VLTAction.SetRecordingStatus(false))
         } else {
             try {
                 val rec = Recognizer(model, 16000.0f)
                 speechService = SpeechService(rec, 16000.0f)
                 speechService!!.startListening(this)
+                updateApplicationState(VLTAction.SetRecordingStatus(true))
             } catch (e: IOException) {
                 onError(e)
             }

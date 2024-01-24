@@ -92,7 +92,7 @@ class MainActivity : ComponentActivity() {
                     onResult = { isGranted ->
                         if (isGranted) {
                             if (viewModel.getVoskHub().isModelAvailable()) {
-                                viewModel.onAction(VLTAction.SetRecordingStatus(true))
+                                //viewModel.onAction(VLTAction.SetRecordingStatus(true))
                                 viewModel.getVoskHub().toggleRecording()
                             } else {
                                 viewModel.getVoskHub().initModel()
@@ -179,9 +179,9 @@ class MainActivity : ComponentActivity() {
                                                 viewModel.onAction(VLTAction.ShowPermissionsDialog(true))
                                             } else {
                                                 viewModel.getVoskHub().toggleRecording()
-                                                viewModel.onAction(VLTAction.SetRecordingStatus(
-                                                    !viewModel.state.isRecording
-                                                ))
+                                                //viewModel.onAction(VLTAction.SetRecordingStatus(
+                                                    //!viewModel.state.isRecording
+                                                //))
                                             }
                                         },
                                         modifier = Modifier
@@ -238,9 +238,9 @@ class MainActivity : ComponentActivity() {
                                                 viewModel.onAction(VLTAction.ShowPermissionsDialog(true))
                                             } else {
                                                 viewModel.getVoskHub().toggleRecording()
-                                                viewModel.onAction(VLTAction.SetRecordingStatus(
-                                                    !viewModel.state.isRecording
-                                                ))
+                                                //viewModel.onAction(VLTAction.SetRecordingStatus(
+                                                    //!viewModel.state.isRecording
+                                                //))
                                             }
                                         },
                                         modifier = Modifier
@@ -365,7 +365,7 @@ class MainActivity : ComponentActivity() {
         if(viewModel.state.isRecording)
         {
             viewModel.getVoskHub().toggleRecording()
-            viewModel.onAction(VLTAction.SetRecordingStatus(false))
+            //viewModel.onAction(VLTAction.SetRecordingStatus(false))
         }
     }
     private fun contactUs() {
