@@ -68,12 +68,13 @@ private val Context.dataStore by preferencesDataStore(
 )
 
 class MainActivity : ComponentActivity() {
+    private lateinit var viewModel: VLTViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
             VoskleLiveTranscribeTheme (darkTheme = isSystemInDarkTheme(), dynamicColor = true) {
-                val viewModel = viewModel<VLTViewModel>(
+                viewModel = viewModel<VLTViewModel>(
                     factory = VLTViewModelFactory(
                         UserPreferencesRepository(
                         applicationContext.dataStore
@@ -359,6 +360,14 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        if(viewModel.state.isRecording)
+        {
+            viewModel.getVoskHub().toggleRecording()
+            viewModel.onAction(VLTAction.SetRecordingStatus(false))
+        }
+    }
     private fun contactUs() {
         Log.d(TAG, "contactUs: Function called")
         val subject = "[vlt] Feedback"
