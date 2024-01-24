@@ -159,6 +159,11 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository, priva
             this.initVoskHub()
         return this.state.voskHubInstance!!
     }
+
+    override fun onCleared(){
+        this.state.voskHubInstance?.reset()
+        super.onCleared()
+    }
 }
 
 class VLTViewModelFactory(private val userPreferences: UserPreferencesRepository, private val context: Context) : ViewModelProvider.NewInstanceFactory() {
