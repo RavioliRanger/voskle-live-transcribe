@@ -12,7 +12,7 @@ package tech.almost_senseless.voskle
  import tech.almost_senseless.voskle.data.UserPreferencesRepository
  import tech.almost_senseless.voskle.vosklib.VoskHub
 
-class VLTViewModel(private val userPreferences: UserPreferencesRepository, private val context: Context) : ViewModel() {
+class VLTViewModel(private val userPreferences: UserPreferencesRepository, @Suppress("StaticFieldLeak") private val context: Context) : ViewModel() {
 
     val settings = userPreferences.userPreferencesFlow
 
@@ -166,6 +166,7 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository, priva
     }
 }
 
+@Suppress("UNCHECKED_CAST")
 class VLTViewModelFactory(private val userPreferences: UserPreferencesRepository, private val context: Context) : ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel> create(modelClass: Class<T>): T = VLTViewModel(userPreferences, context) as T
 }

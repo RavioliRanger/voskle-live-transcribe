@@ -57,7 +57,6 @@ import tech.almost_senseless.voskle.ui.customComposables.TimeouteErrorDialog
 import tech.almost_senseless.voskle.ui.customComposables.UnexpectedResponseDialog
 import tech.almost_senseless.voskle.ui.theme.VoskleLiveTranscribeTheme
 import tech.almost_senseless.voskle.util.UnzipUtils
-import tech.almost_senseless.voskle.vosklib.VoskHub
 import java.io.IOException
 import kotlin.io.path.createTempFile
 
@@ -311,7 +310,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                     if (state.error != null) {
-                        val dialog = when (val err = state.error!!) { // Unnecessary? If I remove this, when isn't exhaustive. Make up your mind...
+                        val dialog = when (@Suppress("UNNECESSARY_NOT_NULL_ASSERTION") val err = state.error!!) {
                             is ErrorKind.ConnectionFailed -> {
                                 ConnectionErrorDialog(
                                     downloadFunction = ::downloadModel,
